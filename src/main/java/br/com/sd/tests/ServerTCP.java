@@ -7,6 +7,9 @@ import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import br.com.sd.streams.PixelInputStream;
+
+
 public class ServerTCP {
     public static void main(String[] args) throws IOException {
 
@@ -15,13 +18,15 @@ public class ServerTCP {
         System.out.println("Servidor esperando conexão...");
 
         Socket client = server.accept();
-        InputStream in = client.getInputStream();
 
-        while (true) {
-            int data = in.read();
-            if (data == -1) break;
+        PixelInputStream pis = new PixelInputStream(client.getInputStream());
 
-            System.out.print(data + " ");
+        Pixel[] pixels = pis.readPixels();
+
+        System.out.println("Pixels recebidos:");
+
+        for (Pixel p : pixels) {
+            System.out.println(p.getX() + ", " + p.getY() + ", " + p.getColor());
         }
 
         client.close();

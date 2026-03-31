@@ -17,7 +17,7 @@ public class FileOutput {
 
         FileOutputStream fos = null;
         try {
-            fos = new FileOutputStream("pixels.txt");
+            fos = new FileOutputStream("pixels.bin");
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }

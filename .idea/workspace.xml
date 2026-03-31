@@ -5,14 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9c063c75-74b3-450a-8bb2-291cdccbf6fe" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/streams/PixelOutputStream.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/tests/ClientTCP.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/tests/DefaultOutput.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/tests/FileOutput.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/tests/ServerTCP.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/streams/PixelInputStream.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/tests/DefaultInput.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/tests/FileInput.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/sd/Main.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/sd/entitys/Pixel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/entitys/Pixel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/sd/tests/ClientTCP.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/tests/ClientTCP.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/sd/tests/FileOutput.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/tests/FileOutput.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/sd/tests/ServerTCP.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/tests/ServerTCP.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,8 +43,12 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Application.ClientTCP.executor": "Run",
+    "Application.DefaultInput.executor": "Run",
     "Application.DefaultOutput.executor": "Run",
+    "Application.FileInput.executor": "Run",
     "Application.FileOutput.executor": "Run",
+    "Application.ServerTCP.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",

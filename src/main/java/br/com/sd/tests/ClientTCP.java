@@ -7,29 +7,23 @@ import java.io.IOException;
 import java.net.Socket;
 
 public class ClientTCP {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         Pixel[] pixels = {
                 new Pixel(10, 20, "red"),
                 new Pixel(30, 40, "blue")
         };
 
-        Socket socket = null;
-        try {
-            socket = new Socket("localhost", 8081);
-            PixelOutputStream pos = new PixelOutputStream(
-                    pixels,
-                    pixels.length,
-                    socket.getOutputStream()
-            );
+        Socket socket = new Socket("localhost", 8080);
 
-            pos.writePixels();
+        PixelOutputStream pos = new PixelOutputStream(
+                pixels,
+                pixels.length,
+                socket.getOutputStream()
+        );
 
-            socket.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        pos.writePixels();
 
-
+        socket.close();
     }
 }
