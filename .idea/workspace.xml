@@ -5,8 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9c063c75-74b3-450a-8bb2-291cdccbf6fe" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/services/BoardService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/services/PixelService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/streams/PixelOutputStream.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/tests/ClientTCP.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/tests/DefaultOutput.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/tests/FileOutput.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/tests/ServerTCP.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/sd/Main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/sd/entitys/Pixel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/entitys/Pixel.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,14 +44,39 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Application.DefaultOutput.executor": "Run",
+    "Application.FileOutput.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
-    "onboarding.tips.debug.path": "/Users/emanuel/Documents/Github/SD1/src/main/java/br/com/sd/Main.java"
+    "onboarding.tips.debug.path": "/Users/emanuel/Documents/Github/SD1/src/main/java/br/com/sd/Main.java",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0"
   }
 }]]></component>
+  <component name="RunManager">
+    <configuration name="DefaultOutput" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="br.com.sd.tests.DefaultOutput" />
+      <module name="SD1" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="br.com.sd.tests.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.DefaultOutput" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -62,17 +93,6 @@
       <updated>1774978086949</updated>
     </task>
     <servers />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/br/com/sd/Main.java</url>
-          <line>13</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>
