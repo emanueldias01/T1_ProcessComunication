@@ -8,14 +8,12 @@ import java.net.Socket;
 
 public class ClientTCP {
     public static void main(String[] args) throws IOException {
-
         Pixel[] pixels = {
-                new Pixel(10, 20, "red"),
-                new Pixel(30, 40, "blue")
+                new Pixel(2, 2, 0xF00000),
+                new Pixel(0, 1, 0x0000FF)
         };
 
-        Socket socket = new Socket("localhost", 8080);
-
+        Socket socket = new Socket("localhost", 5000);
         PixelOutputStream pos = new PixelOutputStream(
                 pixels,
                 pixels.length,
@@ -23,7 +21,5 @@ public class ClientTCP {
         );
 
         pos.writePixels();
-
-        socket.close();
     }
 }

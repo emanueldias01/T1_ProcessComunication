@@ -4,9 +4,9 @@ public class Pixel {
 
     private int x;
     private int y;
-    private String color;
+    private int color;
 
-    public Pixel(int x, int y, String color) {
+    public Pixel(int x, int y, int color) {
         this.x = x;
         this.y = y;
         this.color = color;
@@ -28,11 +28,11 @@ public class Pixel {
         this.y = y;
     }
 
-    public String getColor() {
+    public int getColor() {
         return color;
     }
 
-    public void setColor(String color) {
+    public void setColor(int color) {
         this.color = color;
     }
 }

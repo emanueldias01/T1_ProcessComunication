@@ -27,17 +27,7 @@ public class PixelInputStream extends InputStream {
         for (int i = 0; i < quantidade; i++) {
             int x = readInt();
             int y = readInt();
-
-            int tamanhoCor = readInt();
-
-            byte[] colorBytes = new byte[tamanhoCor];
-            int lidos = in.read(colorBytes);
-
-            if (lidos != tamanhoCor) {
-                throw new IOException("Erro ao ler bytes da cor");
-            }
-
-            String color = new String(colorBytes, StandardCharsets.UTF_8);
+            int color = readInt();
 
             pixels[i] = new Pixel(x, y, color);
         }

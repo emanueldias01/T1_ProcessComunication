@@ -7,10 +7,11 @@ import java.util.stream.Collectors;
 
 public class PixelService {
 
-    public Pixel createPixel(int x, int y, String color) {
+    public Pixel createPixel(int x, int y, int color) {
         return new Pixel(x, y, color);
     }
 
+    /*
     public List<Pixel> getPixelsByColor(List<Pixel> pixels, String color) {
         return pixels.stream()
                 .filter(p -> p.getColor().equalsIgnoreCase(color))
@@ -23,4 +24,5 @@ public class PixelService {
                 .findFirst()
                 .orElse(null);
     }
+     */
 }

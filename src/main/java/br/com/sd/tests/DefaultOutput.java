@@ -8,8 +8,8 @@ import java.io.IOException;
 public class DefaultOutput {
     public static void main(String[] args) {
         Pixel[] pixels = {
-                new Pixel(10, 20, "red"),
-                new Pixel(30, 40, "blue")
+                new Pixel(10, 20, 0xFFFFF),
+                new Pixel(30, 40, 0xFFFFF)
         };
 
         PixelOutputStream pos = new PixelOutputStream(pixels, pixels.length, System.out);

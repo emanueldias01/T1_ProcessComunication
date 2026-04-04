@@ -9,7 +9,6 @@ import java.util.List;
 public class BoardService {
 
     private Board board;
-    private List<Pixel> pixels = new ArrayList<>();
 
     public Board createBoard(int height, int width) {
         this.board = new Board(height, width);
@@ -20,11 +19,7 @@ public class BoardService {
         return board;
     }
 
-    public List<Pixel> getPixels() {
-        return pixels;
-    }
-
-    public boolean addPixel(Pixel pixel) {
+    public boolean setPixel(Pixel pixel) {
         if (board == null) {
             throw new IllegalStateException("Board não foi criado");
         }
@@ -35,7 +30,15 @@ public class BoardService {
             return false;
         }
 
-        pixels.add(pixel);
+        this.board.setPixel(pixel.getX(), pixel.getY(), pixel.getColor());
         return true;
+    }
+
+    public String toString() {
+        if (board == null) {
+            throw new IllegalStateException("Board não foi criado");
+        }
+
+        return this.board.toString();
     }
 }

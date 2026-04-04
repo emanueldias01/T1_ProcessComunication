@@ -33,11 +33,7 @@ public class PixelOutputStream extends OutputStream {
 
             writeInt(p.getY());
 
-            byte[] colorBytes = p.getColor().getBytes(StandardCharsets.UTF_8);
-
-            writeInt(colorBytes.length);
-
-            out.write(colorBytes);
+            writeInt(p.getColor());
         }
 
         out.flush();
