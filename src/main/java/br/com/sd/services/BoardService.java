@@ -15,6 +15,11 @@ public class BoardService {
         return board;
     }
 
+    public Board loadBoard(Board board) {
+        this.board = board;
+        return board;
+    }
+
     public Board getBoard() {
         return board;
     }

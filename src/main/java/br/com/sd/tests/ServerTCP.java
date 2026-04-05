@@ -3,17 +3,15 @@ package br.com.sd.tests;
 import br.com.sd.entitys.Pixel;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import br.com.sd.services.BoardService;
+import br.com.sd.streams.BoardOutputStream;
 import br.com.sd.streams.PixelInputStream;
 import br.com.sd.streams.PixelOutputStream;
 
@@ -24,7 +22,7 @@ public class ServerTCP {
     static private final BoardService boardService = new BoardService();
 
     public static void main(String[] args) throws IOException {
-        boardService.createBoard(20, 20);
+        boardService.createBoard(3, 3);
         System.out.println(boardService.toString());
 
         ServerSocket server = new ServerSocket(5000);
@@ -41,9 +39,11 @@ public class ServerTCP {
         OutputStream os = null;
         try {
             os = client.getOutputStream();
-            clients.add(os);
             PixelInputStream pis = new PixelInputStream(client.getInputStream());
+            BoardOutputStream gos = new BoardOutputStream(boardService.getBoard(), os);
+            gos.writeBoard();
 
+            clients.add(os);
             while (!client.isClosed()) {
                 Pixel[] pixels = pis.readPixels();
                 System.out.println("Pixels recebidos:");
@@ -83,9 +83,8 @@ public class ServerTCP {
             while ((chunk = tickBuffer.poll()) != null) {
                 for (Pixel p : chunk) {
                     boardService.setPixel(p);
-                    boardTick[++length] = p;
+                    boardTick[length++] = p;
                 }
-                is_changed = true;
             }
 
             System.out.println(boardService.toString());
@@ -102,7 +101,13 @@ public class ServerTCP {
 
     private static void broadcast() {
         for (OutputStream os : clients) {
-            new PixelOutputStream(boardTick, length, os);
+            PixelOutputStream pos = new PixelOutputStream(boardTick, length, os);
+            try {
+                pos.writePixels();
+            } catch (IOException e) {
+                System.out.println("cant send pixels for one client");
+            }
+            System.out.println("aoba");
         }
         length = 0;
     }

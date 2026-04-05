@@ -7,7 +7,6 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
 public class PixelOutputStream extends OutputStream {
-
     private Pixel[] pixels;
     private int quantidade;
     private OutputStream out;
@@ -21,6 +20,16 @@ public class PixelOutputStream extends OutputStream {
     @Override
     public void write(int b) throws IOException {
         out.write(b);
+    }
+
+    public void writePixelMap() throws IOException {
+        writeInt(quantidade);
+        for (int i = 0; i < quantidade; i++) {
+            Pixel p = pixels[i];
+            writeInt(p.getColor());
+        }
+
+        out.flush();
     }
 
     public void writePixels() throws IOException {

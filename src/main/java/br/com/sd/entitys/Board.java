@@ -18,6 +18,18 @@ public class Board {
         }
     }
 
+    public Board(int[][] initGrid) {
+        this.height = initGrid.length;
+        this.width = initGrid[0].length;
+        this.grid = new int[this.height][this.width];
+
+        for (int i = 0; i < this.height; i++) {
+            for (int j = 0; j < this.width; j++) {
+                this.grid[i][j] = initGrid[i][j];
+            }
+        }
+    }
+
     public void setPixel(int x, int y, int color) {
         this.grid[y][x] = color;
     }
@@ -36,6 +48,18 @@ public class Board {
 
     public void setWidth(int width) {
         this.width = width;
+    }
+
+    public int[][] getGrid() {
+        int[][] gridCopy = new int[this.height][this.width];
+
+        for (int i = 0; i < this.height; i++) {
+            for (int j = 0; j < this.width; j++) {
+                gridCopy[i][j] = this.grid[i][j];
+            }
+        }
+
+        return gridCopy;
     }
 
     public String toString() {

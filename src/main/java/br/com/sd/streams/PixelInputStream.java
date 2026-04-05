@@ -19,6 +19,21 @@ public class PixelInputStream extends InputStream {
         return in.read();
     }
 
+    public int[][] readPixelMap() throws IOException {
+        int width = readInt();
+        int height = readInt();
+
+        int[][] map = new int[width][height];
+
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                map[i][j] = readInt();
+            }
+        }
+
+        return map;
+    }
+
     public Pixel[] readPixels() throws IOException {
         int quantidade = readInt();
 

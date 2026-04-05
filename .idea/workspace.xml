@@ -5,16 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9c063c75-74b3-450a-8bb2-291cdccbf6fe" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/streams/BoardInputStream.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/streams/BoardOutputStream.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/br/com/sd/entitys/Board.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/entitys/Board.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/sd/entitys/Pixel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/entitys/Pixel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/br/com/sd/services/BoardService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/services/BoardService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/sd/services/PixelService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/services/PixelService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/br/com/sd/streams/PixelInputStream.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/streams/PixelInputStream.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/br/com/sd/streams/PixelOutputStream.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/streams/PixelOutputStream.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/br/com/sd/tests/ClientTCP.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/tests/ClientTCP.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/sd/tests/DefaultOutput.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/tests/DefaultOutput.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/sd/tests/FileOutput.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/tests/FileOutput.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/br/com/sd/tests/ServerTCP.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/tests/ServerTCP.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -110,8 +108,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.ServerTCP" />
         <item itemvalue="Application.ClientTCP" />
+        <item itemvalue="Application.ServerTCP" />
         <item itemvalue="Application.DefaultOutput" />
       </list>
     </recent_temporary>
