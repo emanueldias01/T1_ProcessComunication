@@ -3,9 +3,6 @@ package br.com.sd.services;
 import br.com.sd.entitys.Board;
 import br.com.sd.entitys.Pixel;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class BoardService {
 
     private Board board;

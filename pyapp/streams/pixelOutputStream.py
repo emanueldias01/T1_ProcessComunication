@@ -1,6 +1,6 @@
 import struct
 from typing import BinaryIO
-from pixel import Pixel
+from entitys.pixel import Pixel
 
 class PixelOutputStream:
 

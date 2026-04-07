@@ -11,8 +11,8 @@ public class FileOutput {
     public static void main(String[] args) {
 
         Pixel[] pixels = {
-                new Pixel(1, 2, 0xFFFFFF),
-                new Pixel(2, 1, 0xFFFFFF)
+                new Pixel(1, 2, 0xFF0000),
+                new Pixel(2, 1, 0xFF0000)
         };
 
         FileOutputStream fos = null;

@@ -22,8 +22,7 @@ public class ServerTCP {
     static private final BoardService boardService = new BoardService();
 
     public static void main(String[] args) throws IOException {
-        boardService.createBoard(3, 3);
-        System.out.println(boardService.toString());
+        boardService.createBoard(50, 50);
 
         ServerSocket server = new ServerSocket(5000);
         System.out.println("Servidor esperando conexão...");
@@ -39,11 +38,15 @@ public class ServerTCP {
         OutputStream os = null;
         try {
             os = client.getOutputStream();
+
             PixelInputStream pis = new PixelInputStream(client.getInputStream());
             BoardOutputStream gos = new BoardOutputStream(boardService.getBoard(), os);
+
             gos.writeBoard();
 
             clients.add(os);
+
+            System.out.println(clients.size());
             while (!client.isClosed()) {
                 Pixel[] pixels = pis.readPixels();
                 System.out.println("Pixels recebidos:");
@@ -87,12 +90,14 @@ public class ServerTCP {
                 }
             }
 
-            System.out.println(boardService.toString());
+            if (length != 0) {
+                broadcast();
+            }
 
-            broadcast();
+            length = 0;
 
             try {
-                Thread.sleep(1000);
+                Thread.sleep(16);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -107,8 +112,6 @@ public class ServerTCP {
             } catch (IOException e) {
                 System.out.println("cant send pixels for one client");
             }
-            System.out.println("aoba");
         }
-        length = 0;
     }
 }

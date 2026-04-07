@@ -45,6 +45,5 @@ public class ClientTCP {
                 System.out.println(p.getX() + ", " + p.getY() + ", " + p.getColor());
             }
         }
-
     }
 }
