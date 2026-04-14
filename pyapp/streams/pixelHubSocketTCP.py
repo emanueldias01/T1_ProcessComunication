@@ -9,7 +9,7 @@ from entitys.pixel import Pixel
 class PixelHubTCP():
     def __init__(self) -> None:
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.s.connect(("10.10.241.238", 5000))
+        self.s.connect(("10.10.241.238", 5010))
         
         self.output_stream = self.s.makefile('wb')
         self.input_stream  = self.s.makefile('rb')

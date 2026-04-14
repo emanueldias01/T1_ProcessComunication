@@ -47,7 +47,7 @@ buffer_lock = threading.Lock()
 
 def reading_pixels():
     while True:
-        pixels = pixelHub.recv_pixels()
+        pixels = pixelHubUDP.recv_pixels()
         for p in pixels:
             board_surface.set_at((p.x, p.y), p.color)
             time.sleep(0.004)

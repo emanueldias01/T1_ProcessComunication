@@ -4,7 +4,7 @@ import io
 from streams.pixelInputStream import PixelInputStream
 
 class PixelHubUDP():
-    def __init__(self, mcast_group="224.1.1.4", mcast_port=50003) -> None:
+    def __init__(self, mcast_group="224.1.1.1", mcast_port=50003) -> None:
         self.mcast_group = mcast_group
         self.mcast_port = mcast_port
         
@@ -19,11 +19,11 @@ class PixelHubUDP():
         # tamanho de dados máximo em um pacote UDP
         data, addr = self.sock.recvfrom(10240)
         
-        # Converte os bytes recebidos em um stream para o PixelInputStream
         buffer = io.BytesIO(data)
         pis = PixelInputStream(buffer)
-        
-        return pis.readPixels()
+        pixels = pis.readPixels()
+        print(pixels)
+        return pixels
 
     def disconnect(self):
         self.sock.close()
