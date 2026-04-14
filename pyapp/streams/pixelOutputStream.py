@@ -12,7 +12,6 @@ class PixelOutputStream:
         self.pixels = pixels
         self.quantidade = quantidade
         self.out = out
-    
 
     def write(self, b: int) -> None:
         self.out.write(b)
@@ -30,4 +29,3 @@ class PixelOutputStream:
     
     def writePixel(self, pixel: Pixel) -> None:
         self.out.write(struct.pack('!III', pixel.x, pixel.y, pixel.color))
-

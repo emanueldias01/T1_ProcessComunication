@@ -16,7 +16,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Board")
 clock = pygame.time.Clock()
 
-BOARD_SIZE = 50
+BOARD_SIZE = 500
 board_surface = pygame.Surface((BOARD_SIZE, BOARD_SIZE))
 board_surface.fill("white")
 
@@ -26,7 +26,7 @@ def sync(width, height, surface, board: Board):
             color = board.getColorAt(x, y)
             board_surface.set_at((x, y), color)
 
-sync(50, 50, board_surface, pixelHub.recv_board())
+sync(500, 500, board_surface, pixelHub.recv_board())
 
 # Posição central da Câmera (em coordenadas do board)
 pos = pygame.Vector2(BOARD_SIZE / 2, BOARD_SIZE / 2)
@@ -48,6 +48,7 @@ def reading_pixels():
         pixels = pixelHub.recv_pixels()
         for p in pixels:
             board_surface.set_at((p.x, p.y), p.color)
+            time.sleep(0.004)
 
 def sending_pixel_buffer():
     while True:
@@ -59,10 +60,9 @@ def sending_pixel_buffer():
                 pixelBuffer.clear()
         
         if pixels_to_send:
-            print(pixels_to_send)
             pixelHub.send_pixels(pixels_to_send)        
 
-        time.sleep(0.010)
+        time.sleep(0.100)
 
 thread_rp = threading.Thread(target=reading_pixels)
 thread_rp.start()

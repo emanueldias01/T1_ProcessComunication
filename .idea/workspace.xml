@@ -5,21 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9c063c75-74b3-450a-8bb2-291cdccbf6fe" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/pyapp/entitys/board.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pyapp/entitys/tool.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pyapp/services/boardService.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pyapp/streams/boardInputStream.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pyapp/streams/pixelHubSocketTCP.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pyapp/streams/pixelInputStream.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/entitys/User.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/services/BucketService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pyapp/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/pyapp/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pyapp/pixel.py" beforeDir="false" afterPath="$PROJECT_DIR$/pyapp/entitys/pixel.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pyapp/pixelHubSocketTCP.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pyapp/pixelOutputStream.py" beforeDir="false" afterPath="$PROJECT_DIR$/pyapp/streams/pixelOutputStream.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pyapp/send.py" beforeDir="false" afterPath="$PROJECT_DIR$/pyapp/tests/send.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/sd/services/BoardService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/services/BoardService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/sd/tests/ClientTCP.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/tests/ClientTCP.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/sd/tests/FileOutput.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/tests/FileOutput.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyapp/streams/pixelHubSocketTCP.py" beforeDir="false" afterPath="$PROJECT_DIR$/pyapp/streams/pixelHubSocketTCP.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyapp/streams/pixelOutputStream.py" beforeDir="false" afterPath="$PROJECT_DIR$/pyapp/streams/pixelOutputStream.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/br/com/sd/tests/ServerTCP.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/sd/tests/ServerTCP.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -50,30 +43,32 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.ClientTCP.executor&quot;: &quot;Run&quot;,
-    &quot;Application.DefaultInput.executor&quot;: &quot;Run&quot;,
-    &quot;Application.DefaultOutput.executor&quot;: &quot;Run&quot;,
-    &quot;Application.FileInput.executor&quot;: &quot;Run&quot;,
-    &quot;Application.FileOutput.executor&quot;: &quot;Run&quot;,
-    &quot;Application.ServerTCP.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/vistomia/Desktop/T1_ProcessComunication&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;onboarding.tips.debug.path&quot;: &quot;/Users/emanuel/Documents/Github/SD1/src/main/java/br/com/sd/Main.java&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.ClientTCP.executor": "Run",
+    "Application.DefaultInput.executor": "Run",
+    "Application.DefaultOutput.executor": "Run",
+    "Application.FileInput.executor": "Run",
+    "Application.FileOutput.executor": "Run",
+    "Application.Main.executor": "Run",
+    "Application.ServerMultiCast.executor": "Run",
+    "Application.ServerTCP.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "git-widget-placeholder": "udp-group",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/home/vistomia/Desktop/T1_ProcessComunication",
+    "nodejs_package_manager_path": "npm",
+    "onboarding.tips.debug.path": "/home/vistomia/Desktop/T1_ProcessComunication/votacao/src/Main.java",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0"
   }
-}</component>
-  <component name="RunManager" selected="Application.ServerTCP">
+}]]></component>
+  <component name="RunManager" selected="Application.ServerMultiCast">
     <configuration name="ClientTCP" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="br.com.sd.tests.ClientTCP" />
       <module name="SD1" />
@@ -100,6 +95,32 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="br.com.sd.Main" />
+      <module name="SD1" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="br.com.sd.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ServerMultiCast" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="br.com.sd.tests.ServerMultiCast" />
+      <module name="SD1" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="br.com.sd.tests.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="ServerTCP" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="br.com.sd.tests.ServerTCP" />
       <module name="SD1" />
@@ -115,7 +136,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.ServerMultiCast" />
         <item itemvalue="Application.ServerTCP" />
+        <item itemvalue="Application.Main" />
         <item itemvalue="Application.ClientTCP" />
         <item itemvalue="Application.DefaultOutput" />
       </list>

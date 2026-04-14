@@ -16,15 +16,15 @@ import br.com.sd.streams.PixelInputStream;
 import br.com.sd.streams.PixelOutputStream;
 
 
-public class ServerTCP {
+public class  ServerTCP {
     static private List<OutputStream> clients = new CopyOnWriteArrayList<>();
     static private ConcurrentLinkedQueue<Pixel[]> tickBuffer = new ConcurrentLinkedQueue<>();
     static private final BoardService boardService = new BoardService();
 
     public static void main(String[] args) throws IOException {
-        boardService.createBoard(50, 50);
+        boardService.createBoard(500, 500);
 
-        ServerSocket server = new ServerSocket(5000);
+        ServerSocket server = new ServerSocket(5001);
         System.out.println("Servidor esperando conexão...");
 
         Thread.ofPlatform().start(ServerTCP::tickBoard);
@@ -49,16 +49,16 @@ public class ServerTCP {
             System.out.println(clients.size());
             while (!client.isClosed()) {
                 Pixel[] pixels = pis.readPixels();
+                /*
                 System.out.println("Pixels recebidos:");
                 for (Pixel p : pixels) {
                     System.out.println(p.getX() + ", " + p.getY() + ", " + p.getColor());
                 }
+                */
 
                 if (pixels.length > 0) {
                     tickBuffer.add(pixels);
                 }
-
-                System.out.println(boardService.toString());
             }
         } catch (Exception e) {
             System.out.println("conexão com cliente interrompida");
