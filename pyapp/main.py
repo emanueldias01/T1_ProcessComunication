@@ -1,7 +1,8 @@
 import time
 import threading
 import math
-from streams.pixelHubSocketTCP import PixelHub
+from streams.pixelHubSocketTCP import PixelHubTCP
+from streams.pixelHubSocketUDP import PixelHubUDP
 
 import pygame
 
@@ -9,7 +10,8 @@ from entitys.pixel import Pixel
 from entitys.board import Board
 
 
-pixelHub = PixelHub()
+pixelHub = PixelHubTCP()
+pixelHubUDP = PixelHubUDP()
 
 WIDTH, HEIGHT = 500, 500
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
