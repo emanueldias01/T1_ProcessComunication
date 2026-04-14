@@ -24,7 +24,7 @@ public class  ServerTCP {
     public static void main(String[] args) throws IOException {
         boardService.createBoard(500, 500);
 
-        ServerSocket server = new ServerSocket(5001);
+        ServerSocket server = new ServerSocket(5000);
         System.out.println("Servidor esperando conexão...");
 
         Thread.ofPlatform().start(ServerTCP::tickBoard);

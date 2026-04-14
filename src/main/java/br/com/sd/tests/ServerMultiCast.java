@@ -15,8 +15,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ServerMultiCast {
-    private static final String MULTICAST_IP = "238.1.1.4";
-    private static final int MULTICAST_PORT = 50002;
+    private static final String MULTICAST_IP = "224.1.1.1";
+    private static final int MULTICAST_PORT = 50003;
 
     static private ConcurrentLinkedQueue<Pixel[]> tickBuffer = new ConcurrentLinkedQueue<>();
     static private final BoardService boardService = new BoardService();
@@ -24,9 +24,9 @@ public class ServerMultiCast {
     public static void main(String[] args) throws IOException {
         boardService.createBoard(500, 500);
 
-        ServerSocket server = new ServerSocket(5001);
+        ServerSocket server = new ServerSocket(5010);
 
-        Thread.ofPlatform().start(ServerTCP::tickBoard);
+        Thread.ofPlatform().start(ServerMultiCast::tickBoard);
 
         while (true) {
             Socket client = server.accept();

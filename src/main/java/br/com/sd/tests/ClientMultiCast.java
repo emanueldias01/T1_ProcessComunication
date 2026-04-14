@@ -17,24 +17,19 @@ public class ClientMultiCast {
 
     public static void main(String[] args) throws IOException {
         BoardService boardService = new BoardService();
-        boardService.createBoard(500, 500); // Deve ser o mesmo tamanho do server
+        boardService.createBoard(500, 500);
 
-        // --- PARTE 1: CONEXÃO TCP (Sincronização Inicial) ---
         System.out.println("Conectando ao servidor via TCP para baixar o Board...");
         try (Socket socket = new Socket("localhost", SERVER_TCP_PORT)) {
 
             BoardInputStream bis = new BoardInputStream(socket.getInputStream());
-            // Lê o board inteiro vindo do servidor
             boardService.loadBoard(bis.readBoard());
             System.out.println("Board carregado com sucesso!");
 
-            // Envia alguns pixels iniciais via TCP (opcional, conforme seu código)
             Pixel[] pixelsToSend = { new Pixel(1, 1, 0xFF0000) };
             PixelOutputStream pos = new PixelOutputStream(pixelsToSend, pixelsToSend.length, socket.getOutputStream());
             pos.writePixels();
 
-            // Agora que temos o board, iniciamos a escuta via UDP Multicast em uma thread
-            // enquanto o socket TCP pode ser mantido aberto para enviar novos cliques.
             startMulticastListener(boardService);
 
             // Mantém a main viva para enviar dados se quiser ou apenas observar
