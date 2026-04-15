@@ -7,7 +7,7 @@ from streams.boardInputStream import BoardInputStream
 from entitys.pixel import Pixel
 
 class PixelHubTCP():
-    def __init__(self, ip = "10.10.241.238", port = 5010) -> None:
+    def __init__(self, ip = "127.0.0.1", port = 5010) -> None:
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.s.connect((ip, port))
         

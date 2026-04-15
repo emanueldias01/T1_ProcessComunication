@@ -22,7 +22,6 @@ class PixelHubUDP():
         buffer = io.BytesIO(data)
         pis = PixelInputStream(buffer)
         pixels = pis.readPixels()
-        print(pixels)
         return pixels
 
     def disconnect(self):

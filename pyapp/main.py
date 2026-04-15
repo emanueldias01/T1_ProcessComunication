@@ -5,6 +5,7 @@ import pygame
 import argparse
 
 from streams.pixelHubSocketTCP import PixelHubTCP
+from streams.pixelHubSocketUDP import PixelHubUDP
 from entitys.pixel import Pixel
 
 from entitys.pencil import Pencil
@@ -13,7 +14,7 @@ from entitys.drooper import Dropper
 from entitys.pan import Pan
 
 class PixelCanvasApp:
-    def __init__(self, ip, port, udp):
+    def __init__(self, ip, port, udp, udpGroup, udpPort):
         pygame.init()
         
         self.WIDTH, self.HEIGHT = 500, 500
@@ -29,7 +30,11 @@ class PixelCanvasApp:
         self.pos = pygame.Vector2(self.WIDTH / 2, self.HEIGHT / 2)
         self.zoom = 20.0
 
-        self.pixelHub = PixelHubTCP("10.10.241.238", 5000)
+        self.pixelHub = PixelHubTCP(ip, port)
+        self.is_udp = udp
+        if udp:
+            self.pixelHubMultiCast = PixelHubUDP(udpGroup, udpPort)
+
         self.pixelBuffer = []
         self.buffer_lock = threading.Lock()
         self.running = False
@@ -64,7 +69,12 @@ class PixelCanvasApp:
 
     def reading_pixels(self):
         while self.running:
-            pixels = self.pixelHub.recv_pixels()
+            pixels = []
+            if self.is_udp:
+                pixels = self.pixelHubMultiCast.recv_pixels()
+            else:
+                pixels = self.pixelHub.recv_pixels()
+            
             if pixels:
                 for p in pixels:
                     self.board_surface.set_at((p.x, p.y), p.color)
@@ -234,6 +244,10 @@ class PixelCanvasApp:
             self.clock.tick(60)
 
         self.pixelHub.disconnect()
+
+        if self.is_udp:
+            self.pixelHubMultiCast.disconnect()
+        
         pygame.quit()
 
 def main():
@@ -259,20 +273,20 @@ def main():
     )
     
     parser.add_argument(
-        "--udp-group", 
+        "--udpGroup", 
         type=str, 
         default="224.1.1.1"
     )
 
     parser.add_argument(
-        "--udp-port", 
-        type=str, 
-        default=5003
+        "--udpPort", 
+        type=int, 
+        default=50003
     )
 
     args = parser.parse_args()
     
-    app = PixelCanvasApp(args.ip, args.porta, args.udp)
+    app = PixelCanvasApp(args.ip, args.port, args.udp, args.udpGroup, args.udpPort)
     app.run()
 
 if __name__ == "__main__":
