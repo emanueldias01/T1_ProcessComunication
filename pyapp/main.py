@@ -1,227 +1,279 @@
 import time
 import threading
 import math
-from streams.pixelHubSocketTCP import PixelHubTCP
-
 import pygame
+import argparse
 
+from streams.pixelHubSocketTCP import PixelHubTCP
 from entitys.pixel import Pixel
-from entitys.board import Board
 
+from entitys.pencil import Pencil
+from entitys.eraser import Eraser
+from entitys.drooper import Dropper
+from entitys.pan import Pan
 
-pixelHub = PixelHubTCP("10.10.241.238", 5000)
-
-WIDTH, HEIGHT = 500, 500
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Board")
-clock = pygame.time.Clock()
-
-BOARD_SIZE = 500
-board_surface = pygame.Surface((BOARD_SIZE, BOARD_SIZE))
-board_surface.fill("white")
-
-def sync(width, height, surface, board: Board):
-    for x in range(width):
-        for y in range(height):
-            color = board.getColorAt(x, y)
-            board_surface.set_at((x, y), color)
-
-sync(500, 500, board_surface, pixelHub.recv_board())
-
-# Posição central da Câmera (em coordenadas do board)
-pos = pygame.Vector2(BOARD_SIZE / 2, BOARD_SIZE / 2)
-zoom = 20.0 
-
-tool = "pencil"
-current_color = pygame.Color("black")
-
-is_painting = False
-is_panning = False
-last_board_pos = None
-last_mouse_pos = None
-
-pixelBuffer = []
-buffer_lock = threading.Lock()
-
-def reading_pixels():
-    while True:
-        pixels = pixelHub.recv_pixels()
-        for p in pixels:
-            board_surface.set_at((p.x, p.y), p.color)
-            time.sleep(0.004)
-
-def sending_pixel_buffer():
-    while True:
-        pixels_to_send = []
-
-        with buffer_lock:
-            if len(pixelBuffer) > 0:
-                pixels_to_send = list(pixelBuffer)
-                pixelBuffer.clear()
+class PixelCanvasApp:
+    def __init__(self, ip, port, udp):
+        pygame.init()
         
-        if pixels_to_send:
-            pixelHub.send_pixels(pixels_to_send)        
+        self.WIDTH, self.HEIGHT = 500, 500
+        self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
+        self.clock = pygame.time.Clock()
+        pygame.display.set_caption("Pixel Board")
 
-        time.sleep(0.100)
+        self.BOARD_SIZE = 500
+        self.board_surface = pygame.Surface((self.WIDTH, self.HEIGHT))
+        self.board_surface.fill("white")
 
-thread_rp = threading.Thread(target=reading_pixels)
-thread_rp.start()
+        # camera
+        self.pos = pygame.Vector2(self.WIDTH / 2, self.HEIGHT / 2)
+        self.zoom = 20.0
 
-thread_sb = threading.Thread(target=sending_pixel_buffer)
-thread_sb.start()
+        self.pixelHub = PixelHubTCP("10.10.241.238", 5000)
+        self.pixelBuffer = []
+        self.buffer_lock = threading.Lock()
+        self.running = False
 
-def draw_bresenham(surface, color, x0, y0, x1, y1):
-    x0, y0, x1, y1 = int(x0), int(y0), int(x1), int(y1)
-    
-    dx = abs(x1 - x0)
-    dy = abs(y1 - y0)
-    sx = 1 if x0 < x1 else -1
-    sy = 1 if y0 < y1 else -1
-    err = dx - dy
-
-    while True:
-        if 0 <= x0 < BOARD_SIZE and 0 <= y0 < BOARD_SIZE:
-            surface.set_at((x0, y0), color)
-
-            with buffer_lock:
-                pixelBuffer.append(Pixel(x0, y0, int(color) >> 8))
+        self.current_color = pygame.Color("black")
         
-        if x0 == x1 and y0 == y1:
-            break
+        self.tools = {
+            "pencil": Pencil(self),
+            "eraser": Eraser(self),
+            "dropper": Dropper(self),
+            "pan": Pan(self)
+        }
+        self.active_tool = self.tools["pencil"]
+        
+        # Pan Global (botão do meio)
+        self.global_panning = False
+        self.global_last_mouse_pos = None
+
+    def init_sync(self):
+        board_data = self.pixelHub.recv_board()
+        if board_data:
+            for x in range(self.WIDTH):
+                for y in range(self.HEIGHT):
+                    color = board_data.getColorAt(x, y)
+                    self.board_surface.set_at((x, y), color)
+
+    def start_threads(self):
+        thread_rp = threading.Thread(target=self.reading_pixels, daemon=True)
+        thread_sb = threading.Thread(target=self.sending_pixel_buffer, daemon=True)
+        thread_rp.start()
+        thread_sb.start()
+
+    def reading_pixels(self):
+        while self.running:
+            pixels = self.pixelHub.recv_pixels()
+            if pixels:
+                for p in pixels:
+                    self.board_surface.set_at((p.x, p.y), p.color)
+            # para dar efeito de traço sendo gerado
+            time.sleep(0.06)
+
+    def sending_pixel_buffer(self):
+        while self.running:
+            pixels_to_send = []
+            with self.buffer_lock:
+                if self.pixelBuffer:
+                    pixels_to_send = list(self.pixelBuffer)
+                    self.pixelBuffer.clear()
             
-        e2 = 2 * err
-        if e2 > -dy:
-            err -= dy
-            x0 += sx
-        if e2 < dx:
-            err += dx
-            y0 += sy
+            if pixels_to_send:
+                self.pixelHub.send_pixels(pixels_to_send)        
+            time.sleep(0.100)
 
-def screen_to_board(screen_x, screen_y, pos_x, pos_y, current_zoom):
-    visible_w = WIDTH / current_zoom
-    visible_h = HEIGHT / current_zoom
-    
-    left = pos_x - visible_w / 2
-    top = pos_y - visible_h / 2
-    
-    # Mantém como float para cálculos de câmera precisos
-    board_x = left + (screen_x / current_zoom)
-    board_y = top + (screen_y / current_zoom)
-    
-    return board_x, board_y
+    def screen_to_board(self, screen_x, screen_y):
+        visible_w = self.WIDTH / self.zoom
+        visible_h = self.HEIGHT / self.zoom
+        
+        left = self.pos.x - visible_w / 2
+        top = self.pos.y - visible_h / 2
+        
+        board_x = left + (screen_x / self.zoom)
+        board_y = top + (screen_y / self.zoom)
+        
+        return board_x, board_y
 
+    def draw_line(self, x0, y0, x1, y1, color):
+        x0, y0, x1, y1 = int(x0), int(y0), int(x1), int(y1)
+        dx = abs(x1 - x0)
+        dy = abs(y1 - y0)
+        sx = 1 if x0 < x1 else -1
+        sy = 1 if y0 < y1 else -1
+        err = dx - dy
 
-## GameLoop
-running = True
+        while True:
+            if 0 <= x0 < self.WIDTH and 0 <= y0 < self.HEIGHT:
+                self.board_surface.set_at((x0, y0), color)
 
-while running:
-    mouse_x, mouse_y = pygame.mouse.get_pos()
-    
-    # Coordenadas do board sob o mouse
-    cx_float, cy_float = screen_to_board(mouse_x, mouse_y, pos.x, pos.y, zoom)
-    
-    # Coordenadas para desenhar pixels
-    board_x, board_y = int(cx_float), int(cy_float)
-
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pixelHub.disconnect()
-            running = False
+                with self.buffer_lock:
+                    self.pixelBuffer.append(Pixel(x0, y0, int(color) >> 8))
             
-        elif event.type == pygame.KEYDOWN:
-            key = event.unicode.lower()
-            if key in ['w', 'b']: tool = "pencil"
-            elif key == 'e': tool = "eraser"
-            elif key in ['i', 'k']: tool = "dropper"
-            elif key in ['h', ' ']: tool = "pan"
-            
-            # cores
-            elif event.key == pygame.K_1: current_color = pygame.Color("#3772FF")
-            elif event.key == pygame.K_2: current_color = pygame.Color("#ef2d56")
-            elif event.key == pygame.K_3: current_color = pygame.Color("#2fbf71")
-            elif event.key == pygame.K_4: current_color = pygame.Color("#000000")
-
-        elif event.type == pygame.MOUSEWHEEL:
-            old_zoom = zoom
-            zoom += event.y * 0.2 * zoom 
-            zoom = max(1.0, min(zoom, 100.0))
-            
-            if zoom != old_zoom:
-                pos.x = cx_float + (WIDTH / 2 - mouse_x) / zoom
-                pos.y = cy_float + (HEIGHT / 2 - mouse_y) / zoom
-
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1: 
-                if tool == "pan":
-                    is_panning = True
-                    last_mouse_pos = (mouse_x, mouse_y)
-                elif tool == "dropper":
-                    if 0 <= board_x < BOARD_SIZE and 0 <= board_y < BOARD_SIZE:
-                        current_color = board_surface.get_at((board_x, board_y))
-                else: 
-                    is_painting = True
-                    last_board_pos = (board_x, board_y)
-                    draw_color = pygame.Color("white") if tool == "eraser" else current_color
-                    draw_bresenham(board_surface, draw_color, board_x, board_y, board_x, board_y)
-            
-            elif event.button == 2: 
-                is_panning = True
-                last_mouse_pos = (mouse_x, mouse_y)
-
-        elif event.type == pygame.MOUSEBUTTONUP:
-            if event.button == 1:
-                is_painting = False
-                is_panning = False
-            elif event.button == 2:
-                is_panning = False
-
-        elif event.type == pygame.MOUSEMOTION:
-            if is_panning and last_mouse_pos:
-                dx = mouse_x - last_mouse_pos[0]
-                dy = mouse_y - last_mouse_pos[1]
-                pos.x -= dx / zoom  
-                pos.y -= dy / zoom
-                last_mouse_pos = (mouse_x, mouse_y)
+            if x0 == x1 and y0 == y1:
+                break
                 
-            elif is_painting and last_board_pos:
-                draw_color = pygame.Color("white") if tool == "eraser" else current_color
-                draw_bresenham(board_surface, draw_color, last_board_pos[0], last_board_pos[1], board_x, board_y)
-                last_board_pos = (board_x, board_y)
+            e2 = 2 * err
+            if e2 > -dy:
+                err -= dy
+                x0 += sx
+            if e2 < dx:
+                err += dx
+                y0 += sy
 
-    screen.fill("#2a2a2a")
+    def handle_events(self):
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        cx_float, cy_float = self.screen_to_board(mouse_x, mouse_y)
+        board_x, board_y = int(cx_float), int(cy_float)
 
-    visible_w = WIDTH / zoom
-    visible_h = HEIGHT / zoom
-    left = pos.x - visible_w / 2
-    top = pos.y - visible_h / 2
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+                
+            elif event.type == pygame.KEYDOWN:
+                key = event.unicode.lower()
+                
+                # Troca de Ferramentas
+                if key in ['w', 'b']: self.active_tool = self.tools["pencil"]
+                elif key == 'e': self.active_tool = self.tools["eraser"]
+                elif key in ['i', 'k']: self.active_tool = self.tools["dropper"]
+                elif key in ['h', ' ']: self.active_tool = self.tools["pan"]
+                
+                # Troca cores
+                elif event.key == pygame.K_0: self.current_color = pygame.Color("#FFFFFF")
+                elif event.key == pygame.K_1: self.current_color = pygame.Color("#000000")
+                elif event.key == pygame.K_2: self.current_color = pygame.Color("#ef2d56")
+                elif event.key == pygame.K_3: self.current_color = pygame.Color("#2fbf71")
+                elif event.key == pygame.K_4: self.current_color = pygame.Color("#3772FF")
+                elif event.key == pygame.K_5: self.current_color = pygame.Color("#FFDA37")
+                elif event.key == pygame.K_6: self.current_color = pygame.Color("#D346E6")
 
-    sub_rect = pygame.Rect(math.floor(left), math.floor(top), math.ceil(visible_w) + 1, math.ceil(visible_h) + 1)
+            elif event.type == pygame.MOUSEWHEEL:
+                old_zoom = self.zoom
+                self.zoom += event.y * 0.2 * self.zoom 
+                self.zoom = max(1.0, min(self.zoom, 100.0))
+                
+                if self.zoom != old_zoom:
+                    self.pos.x = cx_float + (self.WIDTH / 2 - mouse_x) / self.zoom
+                    self.pos.y = cy_float + (self.HEIGHT / 2 - mouse_y) / self.zoom
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 2:
+                    self.global_panning = True
+                    self.global_last_mouse_pos = (mouse_x, mouse_y)
+                else:
+                    self.active_tool.on_mouse_down(event, board_x, board_y)
+
+            elif event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 2:
+                    self.global_panning = False
+                    self.global_last_mouse_pos = None
+                else:
+                    self.active_tool.on_mouse_up(event)
+
+            elif event.type == pygame.MOUSEMOTION:
+                # Trata o pan global primeiro
+                if self.global_panning and self.global_last_mouse_pos:
+                    dx = mouse_x - self.global_last_mouse_pos[0]
+                    dy = mouse_y - self.global_last_mouse_pos[1]
+                    self.pos.x -= dx / self.zoom  
+                    self.pos.y -= dy / self.zoom
+                    self.global_last_mouse_pos = (mouse_x, mouse_y)
+                else:
+                    # Delega para a ferramenta ativa
+                    self.active_tool.on_mouse_motion(event, board_x, board_y, mouse_x, mouse_y)
+
+    def render(self):
+        self.screen.fill("#2a2a2a")
+
+        visible_w = self.WIDTH / self.zoom
+        visible_h = self.HEIGHT / self.zoom
+        left = self.pos.x - visible_w / 2
+        top = self.pos.y - visible_h / 2
+
+        sub_rect = pygame.Rect(math.floor(left), math.floor(top), math.ceil(visible_w) + 1, math.ceil(visible_h) + 1)
+        board_rect = self.board_surface.get_rect()
+        clip_rect = sub_rect.clip(board_rect)
+
+        if clip_rect.width > 0 and clip_rect.height > 0:
+            visible_piece = self.board_surface.subsurface(clip_rect)
+            
+            scaled_w = int(clip_rect.width * self.zoom)
+            scaled_h = int(clip_rect.height * self.zoom)
+            scaled_piece = pygame.transform.scale(visible_piece, (scaled_w, scaled_h))
+            
+            screen_x = (clip_rect.left - left) * self.zoom
+            screen_y = (clip_rect.top - top) * self.zoom
+            
+            self.screen.blit(scaled_piece, (screen_x, screen_y))
+
+        # Preview do Mouse
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        bx_float, by_float = self.screen_to_board(mouse_x, mouse_y)
+        board_x, board_y = int(bx_float), int(by_float)
+
+        is_panning_tool = (self.active_tool == self.tools["pan"])
+        if 0 <= board_x < self.WIDTH and 0 <= board_y < self.HEIGHT and not self.global_panning and not is_panning_tool:
+            preview_x = (board_x - left) * self.zoom
+            preview_y = (board_y - top) * self.zoom
+            overlay = pygame.Surface((int(self.zoom), int(self.zoom)), pygame.SRCALPHA)
+            overlay.fill((0, 0, 0, 100)) 
+            self.screen.blit(overlay, (preview_x, preview_y))
+            pygame.draw.rect(self.screen, "white", (preview_x, preview_y, int(self.zoom), int(self.zoom)), 1)
+
+        pygame.display.flip()
+
+    def run(self):
+        self.running = True
+        self.init_sync()
+        self.start_threads()
+
+        while self.running:
+            self.handle_events()
+            self.render()
+            self.clock.tick(60)
+
+        self.pixelHub.disconnect()
+        pygame.quit()
+
+def main():
+    parser = argparse.ArgumentParser(description="Inicia o Pixel Board Client.")
     
-    board_rect = board_surface.get_rect()
-    clip_rect = sub_rect.clip(board_rect)
+    parser.add_argument(
+        "--ip", 
+        type=str, 
+        default="10.10.241.238", 
+        help="Endereço IP da máquina servidor"
+    )
+    
+    parser.add_argument(
+        "--port", 
+        type=int, 
+        default=5000, 
+        help="Porta de conexão do servidor"
+    )
 
-    if clip_rect.width > 0 and clip_rect.height > 0:
-        visible_piece = board_surface.subsurface(clip_rect)
-        
-        scaled_w = int(clip_rect.width * zoom)
-        scaled_h = int(clip_rect.height * zoom)
-        scaled_piece = pygame.transform.scale(visible_piece, (scaled_w, scaled_h))
-        
-        screen_x = (clip_rect.left - left) * zoom
-        screen_y = (clip_rect.top - top) * zoom
-        
-        screen.blit(scaled_piece, (screen_x, screen_y))
+    parser.add_argument(
+        "--udp", 
+        action="store_true"
+    )
+    
+    parser.add_argument(
+        "--udp-group", 
+        type=str, 
+        default="224.1.1.1"
+    )
 
-    # Preview do Mouse
-    if 0 <= board_x < BOARD_SIZE and 0 <= board_y < BOARD_SIZE and not is_panning:
-        preview_x = (board_x - left) * zoom
-        preview_y = (board_y - top) * zoom
-        overlay = pygame.Surface((int(zoom), int(zoom)), pygame.SRCALPHA)
-        overlay.fill((0, 0, 0, 100)) 
-        screen.blit(overlay, (preview_x, preview_y))
-        pygame.draw.rect(screen, "white", (preview_x, preview_y, int(zoom), int(zoom)), 1)
+    parser.add_argument(
+        "--udp-port", 
+        type=str, 
+        default=5003
+    )
 
-    pygame.display.flip()
-    clock.tick(60)
+    args = parser.parse_args()
+    
+    app = PixelCanvasApp(args.ip, args.porta, args.udp)
+    app.run()
 
-pygame.quit()
+if __name__ == "__main__":
+    main()
