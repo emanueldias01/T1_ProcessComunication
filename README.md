@@ -2,7 +2,7 @@
 
 Trabalho 1 da cadeira de **Sistemas Distribuídos** focado em **comunicação por sockets** e **troca de fluxos de bytes** entre **cliente e servidor**, com implementação em **Java (servidor)** e **Python (cliente)**.
 
-O projeto implementa um “serviço remoto” no estilo **Pixel Hub / Board**: o cliente desenha pixels e envia atualizações ao servidor, enquanto o servidor mantém o estado do **Board** e faz **broadcast** das alterações para todos os clientes conectados via **TCP** e também suporta **UDP**.
+O projeto implementa um “serviço remoto” comu um **Mural de PixelArt Colaborativo**: o cliente desenha pixels e envia atualizações ao servidor, enquanto o servidor mantém o estado do **Board** e faz **broadcast** das alterações para todos os clientes conectados via **TCP** e também suporta **UDP**.
 
 ---
 
@@ -87,18 +87,16 @@ No projeto, o envio para servidor TCP aparece no fluxo real do cliente/servidor 
 - **Java:** `src/main/java/br/com/sd/streams/PixelInputStream.java` (extends `InputStream`)
 - **Python (equivalente):** `pyapp/streams/pixelInputStream.py`
 
-#### Regras do enunciado (como foi atendido)
+#### Regras do enunciado
 - Construtor recebe um `InputStream` de origem
 - Lê os bytes na mesma ordem do `PixelOutputStream`:
   - lê `quantidade`
   - reconstrói `Pixel[]`/lista lendo `x`, `y`, `color` como inteiros (4 bytes)
 
-#### Como testar (exemplos)
+#### Como testar
 - **Entrada padrão:** `System.in`
 - **Arquivo:** `FileInputStream`
 - **Servidor remoto TCP:** `Socket.getInputStream()`
-
-No repositório, o uso prático ocorre no servidor para ler pixels enviados pelos clientes, e no cliente para ler pixels broadcastados.
 
 ---
 
@@ -110,9 +108,15 @@ A comunicação principal implementada é **TCP**, trocando **fluxos de bytes**:
 - **Servidor Java (TCP):** `src/main/java/br/com/sd/tests/ServerTCP.java`
 - **Cliente Python (TCP):** `pyapp/streams/pixelHubSocketTCP.py` + `pyapp/main.py`
 
+### Visão geral do UDP (multicast)
+A comunicação principal implementada é **UDP**, trocando **fluxos de bytes**:
+
+- **Servidor Java (TCP):** `src/main/java/br/com/sd/tests/ServerTCP.java`
+- **Cliente Python (TCP):** `pyapp/streams/pixelHubSocketUDP.py` + `pyapp/main.py`
+
 #### O que o servidor faz (Java)
 1. Cria um `ServerSocket` na porta `5000`
-2. Aceita múltiplos clientes e cria uma thread por cliente (**multi-threaded**)
+2. Aceita múltiplos clientes, cria uma thread por cliente e uma thread para atualizar o board(**multi-threaded**)
 3. Ao conectar:
    - envia o **Board completo** para o cliente (via `BoardOutputStream`)
    - entra em loop lendo **pixels** do cliente (via `PixelInputStream`)
@@ -133,7 +137,7 @@ Ou seja:
    - recebe pixels do servidor (via `PixelInputStream`)
    - envia pixels desenhados (via `PixelOutputStream`)
 
-Isso demonstra bem o requisito:
+Isso demonstra o requisito:
 - cliente empacota request (bytes) e envia,
 - servidor desempacota request,
 - servidor empacota reply e envia,
@@ -141,64 +145,40 @@ Isso demonstra bem o requisito:
 
 ---
 
-## 5) UDP / Multicast (contexto do enunciado)
-
-O enunciado prevê **UDP multicast** para mensagens informativas (ex.: avisos do administrador) e TCP para login/lista/votos.  
-Neste repositório, **não foram encontrados trechos com UDP/Multicast** (ex.: `DatagramSocket`, `MulticastSocket`, `socket.SOCK_DGRAM`) nos resultados consultados.
-
-Mesmo assim, o README pode registrar a proposta corretamente:
-
-### Como o UDP multicast seria usado (na aplicação final)
-- **Servidor** cria um socket UDP multicast e publica “notas informativas” em um grupo (ex.: `224.x.x.x:porta`)
-- **Clientes** entram no grupo multicast e recebem mensagens de broadcast sem precisar manter uma conexão TCP com cada um
-- Uso exclusivo: **mensagens informativas**, independentes do fluxo principal TCP (pixels/votos/etc.)
-
-> Se vocês já implementaram o multicast em outra parte do projeto e ela não apareceu nos trechos localizados, vale apontar aqui os arquivos/classes UDP (quando existirem) e como executar.
-
----
-
-## Estrutura do projeto (alta nível)
-
-### Java
-- `src/main/java/br/com/sd/entitys/`  
-  POJOs: `Pixel`, `Board`, ...
-- `src/main/java/br/com/sd/services/`  
-  Modelos/serviços: `PixelService`, `BoardService`
-- `src/main/java/br/com/sd/streams/`  
-  Streams binários: `PixelOutputStream`, `PixelInputStream`, `BoardOutputStream`, `BoardInputStream`
-- `src/main/java/br/com/sd/tests/`  
-  Testes/execução: `ServerTCP` (servidor)
-
-### Python
-- `pyapp/entitys/`  
-  `pixel.py`, `board.py`
-- `pyapp/streams/`  
-  `pixelOutputStream.py`, `pixelInputStream.py`, `boardInputStream.py`, `pixelHubSocketTCP.py`
-- `pyapp/main.py`  
-  Cliente (GUI) que desenha e sincroniza o board via TCP
-
----
-
 ## Como executar (exemplo)
 
 ### 1) Subir servidor TCP (Java)
 - Executar a classe:
-  - `br.com.sd.tests.ServerTCP`  
+  - `br.com.sd.tests.ServerTCP`
 - Porta usada: `5000`
 
-### 2) Rodar cliente (Python)
+### 2) Subir servidor MultiCast TCP/UDP (Java)
+- Executar a classe:
+- `br.com.sd.tests.ServerMultiCast`
+- Porta usada: `5003`
+
+- _substituição do TCP caso seja usado em redes estáveis_
+
+### 3) Rodar cliente (Python)
 - Executar:
   - `pyapp/main.py`
-- Ajustar host/porta no arquivo `pyapp/streams/pixelHubSocketTCP.py` (está apontando para um IP específico)
+- `python pyapp/main.py --ip 192.168.0.10 --port 5000 --udp --udp-group 224.1.1.1 --udp-port 5003`
+    --ip: Endereço IP da máquina servidor (Padrão: 127.0.0.1)
+    --port: Porta de conexão TCP do servidor (Padrão: 5000)
+    --udp: Flag para ativar o modo UDP Multicast para o `recv` dos pixels
+    --udp-group: Endereço do grupo Multicast (Padrão: 224.1.1.1)
+    --udp-port: Porta para o tráfego UDP (Padrão: 5003)
 
 ---
 
 ## Protocolo (resumo do empacotamento)
 
+O envio é serializado em bytes de inteiros no cliente e servidor. `br.com.sd.streams.PixelOutpuStream`
+
 ### Pixels (PixelOutputStream/PixelInputStream)
 ```
-[int quantidade]
-repetir quantidade vezes:
+[int n]
+repetir n vezes:
   [int x]
   [int y]
   [int color]
@@ -206,9 +186,9 @@ repetir quantidade vezes:
 
 ### Board (BoardOutputStream/BoardInputStream)
 ```
-[int width]
-[int height]
-para y em 0..height-1:
-  para x em 0..width-1:
+[int largura]
+[int altura]
+repetir y em 0..altura-1:
+  repetir x em 0..largura-1:
     [int color]
 ```
